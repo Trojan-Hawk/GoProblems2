@@ -29,14 +29,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 // handles all guess.html requests
 func guessHandler(w http.ResponseWriter, r *http.Request) {
-	// root page
-	// http.ServeFile(w, r, "guess.html")
 	
 	// setting the nessage struct
 	m := message{Message: "Guess a number between 1 and 20: "}
 	
 	// parsing the guess.tmpl
-	tmpl, _ = tmpl.ParseFiles("guess.tmpl")
+	tmpl, _ := template.ParseFiles("guess.tmpl")
 	
 	// execute the template with the message
 	tmpl.Execute(w, m)
