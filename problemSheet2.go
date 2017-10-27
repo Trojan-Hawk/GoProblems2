@@ -21,9 +21,18 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "index.html")
 }
 
+// handles all guess.html requests
+func guessHandler(w http.ResponseWriter, r *http.Request) {
+	// root page
+	http.ServeFile(w, r, "guess.html")
+}
+
 func main() {
-	//call handler function
+	// call handler function
 	http.HandleFunc("/", handler)
-	http.HandleFunc("/guess", handler)
+	
+	// call the guess handler
+	http.HandleFunc("/guess", guessHandler)
+	
 	http.ListenAndServe(":8080", nil)
 }
