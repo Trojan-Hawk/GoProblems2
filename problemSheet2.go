@@ -1,8 +1,9 @@
 // Student Name: Timothy Cassidy
 // Student Number: G00333333
 
-// source
+// sources
 // https://golang.org/doc/articles/wiki/
+// https://golangcode.com/get-a-url-parameter-from-a-request/
 
 // Used seperate files for the first two parts of the problem
 // this will be the main file for the remainder
@@ -11,17 +12,20 @@ package main
 
 //To use the net/http package, it must be imported
 import (
-	"fmt"
+	//"fmt"
+	"log"
 	"net/http"
 	"html/template"
 	"math/rand"
 	"strconv"
 	"time"
+	//"net/url"
 )// imports
 
 // template message struct
 type message struct {
 	Message string
+	Guess string
 }// message_struct
 
 //The main function begins with a call to http.HandleFunc, which tells the http package to handle all requests to the web root ("/") with handler.
@@ -46,8 +50,6 @@ func guessHandler(w http.ResponseWriter, r *http.Request) {
 		// convert the generated num to string to store in cookie
 		str := strconv.Itoa(randGuess)
 		
-		
-		
 		// creating the cookie "target", with a value of num
 		cookie := http.Cookie{
 			Name:  "target",
@@ -57,14 +59,37 @@ func guessHandler(w http.ResponseWriter, r *http.Request) {
 		// override "target" cookie
 		http.SetCookie(w, &cookie)
 	}// if
+	
 	// Serving the template
 	// setting the message struct
 	m := message{Message: "Guess a number between 1 and 20: "}
+	// setting the guess struct
+	m = message{Guess: ""}
 	
 	// parsing the guess.tmpl
 	tmpl, _ := template.ParseFiles("guess.tmpl")
 	
-	// execute the template with the message
+	// checking for guess URL encoded variable
+	guess, err := r.URL.Query()["guess"]
+    // if not found execute the template and exit
+	if !err || len(guess) < 1 {
+		log.Println("Url Param 'guess' is missing")
+		// execute the template with the message
+		tmpl.Execute(w, m)
+		return
+	}// if
+	
+	// Query()["guess"] will return an array of items, 
+	// we only want the single item.
+	g := guess[0]
+	
+	// adding the guess value to the template
+	m = message{Guess: "You guessed " + g}
+
+	// guess var log
+	log.Println("Url Param 'guess' is: " + string(g))
+	
+	// execute the template with the message and guess
 	tmpl.Execute(w, m)
 	
 }// guessHandler
