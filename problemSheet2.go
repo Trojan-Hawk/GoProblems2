@@ -13,7 +13,13 @@ package main
 import (
 	//"fmt"
 	"net/http"
+	"html/template"
 )
+
+// template message struct
+type messgae struct {
+	Message string
+}
 
 //The main function begins with a call to http.HandleFunc, which tells the http package to handle all requests to the web root ("/") with handler.
 func handler(w http.ResponseWriter, r *http.Request) {
